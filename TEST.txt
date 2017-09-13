@@ -1,0 +1,47 @@
+https://damienbod.com/2014/06/10/getting-started-with-web-api-and-odata-v4/
+
+http://www.odata.org/getting-started/basic-tutorial/
+
+---------------------------------------------------------
+1. Install-Package Microsoft.AspNet.OData -Version 5.7.0
+---------------------------------------------------------
+
+---------------------------------------------------------
+2. EmployeeController
+   using System.Web.OData;             //v4
+   //using System.Web.Http.OData;      //v3 --> "406 Not Acceptable" error
+---------------------------------------------------------
+
+---
+GET http://localhost:1057/odata/$metadata
+---
+
+GET  http://localhost:1057/odata/Employee
+
+GET  http://localhost:1057/odata/Employee(1)
+
+PATCH http://localhost:1057/odata/Employee(1)
+content-type: application/json
+
+{
+    "EmployeeID": 1,
+    "LastName": "Davolio",
+    "FirstName": "Nancy",
+    "Notes": "Patch test",
+    "ReportsTo": 2,
+}
+ http://localhost:1057/odata/Employee?$orderby=EmployeeID desc  --> working
+ http://localhost:1057/odata/Employee?$select=EmployeeID,LastName,FirstName,Title,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension
+ http://localhost:1057/odata/Employee(1)?$select=EmployeeID,LastName,FirstName,Title,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension
+
+ http://localhost:1057/odata/Employee?$select=EmployeeID&$expand=Orders($select=OrderID,CustomerID,OrderDate,ShipName)  -- working
+ 
+{
+  "@odata.context":"http://localhost:1057/odata/$metadata#Employee(EmployeeID,Orders,Orders(OrderID,CustomerID,OrderDate,ShipName))","value":[
+    {
+      "EmployeeID":1,"Orders":[
+        {
+          "OrderID":10258,"CustomerID":"ERNSH","OrderDate":"1996-07-17T00:00:00-07:00","ShipName":"Ernst Handel"
+        },{
+          "OrderID":10270,"CustomerID":"WARTH","OrderDate":"1996-08-01T00:00:00-07:00","ShipName":"Wartian Herkku"
+        },{
